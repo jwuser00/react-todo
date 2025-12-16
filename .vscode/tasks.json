@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "start react app",
+      "type": "shell",
+      "command": "eval \"$(fnm env --use-on-cd --shell zsh)\" && npm run dev",
+      "isBackground": true,
+      "options": {
+        "env": {
+          "XDG_STATE_HOME": "${workspaceFolder}/.local/state"
+        },
+        "shell": {
+          "executable": "/bin/zsh",
+          "args": ["-l", "-c"]
+        }
+      },
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "(Starting|ready in) .*",
+          "endsPattern": "Local: .*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
