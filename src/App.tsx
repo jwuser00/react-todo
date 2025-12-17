@@ -1,12 +1,12 @@
 import './App.css'
 import TodoList from './components/todolist';
+import { DarkModeProvider } from './context/DarkModeContext';
+
 function App() {
   return (
-    <>
-      <div>
-        <TodoList />
-      </div>
-    </>
+    <DarkModeProvider>
+      <TodoList />
+    </DarkModeProvider>
   )
 }
 

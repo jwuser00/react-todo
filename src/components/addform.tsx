@@ -1,6 +1,11 @@
 import { useState } from "react";
+import styles from './addform.module.css';
 
-export default function AddForm({ onAdd }: { onAdd: (text: string) => void }) {
+interface AddFormProps {
+    onAdd: (text: string) => void;
+}
+
+export default function AddForm({ onAdd }: AddFormProps) {
     const [text, setText] = useState('');
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -11,9 +16,11 @@ export default function AddForm({ onAdd }: { onAdd: (text: string) => void }) {
     };
 
     return (
+        <div>
         <form onSubmit={onSubmit}>
             <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
-            <button type="submit">Add</button>
+            <button className={styles.button} type="submit">Add</button>
         </form>
+        </div>
     );
 }

@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import AddForm from './addform.tsx';
-interface Todo {
-    id: number;
+import Todo from './todo.tsx';
+import { v4 as uuidv4 } from 'uuid';
+import '../index.css';
+import { useDarkMode } from '../context/DarkModeContext';
+
+export interface Todo {
+    id: string;
     text: string;
     status: boolean;
 }
 
 function TodoList() {
     const [todos, setTodos] = useState<Todo[]>([]);
+    const [filter, setFilter] = useState('all');
+    const { darkMode, toggleDarkMode } = useDarkMode();
 
     useEffect(() => {
         fetch('/data/data.json')
@@ -16,7 +23,7 @@ function TodoList() {
     }, []);
 
     const addTodo = (text: string) => {
-        const nextId = todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 1;
+        const nextId = uuidv4();
         const newTodo = {
             id: nextId,
             text,
@@ -25,17 +32,39 @@ function TodoList() {
         setTodos([...todos, newTodo]);
     };
 
+    const toggleTodo = (id: string) => {
+        setTodos(todos.map(todo => todo.id === id ? { ...todo, status: !todo.status } : todo));
+    };
+
+    const deleteTodo = (id: string) => {
+        setTodos(todos.filter(todo => todo.id !== id));
+    };
+
+    const filteredTodos = filterTodos(todos, filter);
+
     return (
-        <section>
+        <section id="container">
+            <div id="container-filter">
+                <button onClick={toggleDarkMode}>
+                    {darkMode ? 'Light Mode' : 'Dark Mode'}
+                </button>
+                <button onClick={() => setFilter('all')}>All</button>
+                <button onClick={() => setFilter('active')}>Active</button>
+                <button onClick={() => setFilter('completed')}>Completed</button>
+            </div>
             <ul>
-                {todos.map(todo => (
-                    <li key={todo.id}>
-                        {todo.text} - {todo.status ? 'Done' : 'Not Done'}
-                    </li>
+                {filteredTodos.map(todo => (
+                    <Todo key={todo.id} todo={todo} onUpdate={toggleTodo} onDelete={deleteTodo} />
                 ))}
             </ul>
             <AddForm onAdd={addTodo} />
         </section>
     );
+}
+
+function filterTodos(todos: Todo[], filter: string) {
+    if (filter === 'active') return todos.filter(todo => !todo.status);
+    if (filter === 'completed') return todos.filter(todo => todo.status);
+    return todos;
 }
 export default TodoList;
