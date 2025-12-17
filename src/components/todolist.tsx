@@ -12,15 +12,16 @@ export interface Todo {
 }
 
 function TodoList() {
-    const [todos, setTodos] = useState<Todo[]>([]);
+    const [todos, setTodos] = useState<Todo[]>(() => {
+        const localData = localStorage.getItem('todos');
+        return localData ? JSON.parse(localData) : [];
+    });
     const [filter, setFilter] = useState('all');
     const { darkMode, toggleDarkMode } = useDarkMode();
 
     useEffect(() => {
-        fetch('/data/data.json')
-            .then(res => res.json())
-            .then(data => setTodos(data));
-    }, []);
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }, [todos]);
 
     const addTodo = (text: string) => {
         const nextId = uuidv4();
